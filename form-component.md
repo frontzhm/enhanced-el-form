@@ -68,6 +68,51 @@ el-form(:model="model" :rules="rules" v-bind="options")
     el-input(v-model="model[config.modelKey]" v-bind="config.props")
 ```
 
+## 匹配除了input之外的元素
+
+要是只能`input`，也太不实用了，为了随意使用各种类型，需要在组件里各个匹配。
+
+[官网的侧边栏](https://element.eleme.cn/#/zh-CN/component/radio)，看下所有的表单组件：
+
+- radio
+- checkbox
+- input
+- input-number
+- cascader
+- switch
+- slider
+- time-select
+- date-picker
+- rate
+- color-picker
+- transfer
+- radio-group，需要子组件
+- checkbox-group，需要子组件
+- select，需要子组件
+- upload，需要子组件
+
+
+
+
+### 可输入的
+
+- input
+- input-number
+- 
+
+### 可选择的
+
+- select
+- cascader
+- switch
+
+
+
+
+radio checkbox 
+input 
+
+
 ## 代码
 
 ### 组件概况代码

@@ -1,6 +1,7 @@
 <template lang="pug">
 div#app
   enhanced-el-form(:model="model" :options="options" :schema="schema")
+  div {{model}}
 
 </template>
 
@@ -16,7 +17,8 @@ export default {
     return {
       model: {
         name: "",
-        age: ""
+        age: "",
+        likes: ""
       },
       schema: [
         {
@@ -36,6 +38,15 @@ export default {
             maxlength: 5
           },
           rules: [{ required: true, message: "请输入年龄", trigger: "blur" }]
+        },
+        {
+          type: "select",
+          modelKey: "likes",
+          label: "爱好",
+          props: {
+            options: [{ label: "x", value: "xx" }]
+          },
+          rules: [{ required: true, message: "请选择", trigger: "blur" }]
         }
       ],
       options: {
