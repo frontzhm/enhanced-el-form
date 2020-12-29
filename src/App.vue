@@ -39,7 +39,7 @@ export default {
         }
       ],
       options: {
-        inline: false
+        inline: true
       }
     };
   }
