@@ -1,0 +1,34 @@
+---
+title: 让el-form更好用
+tags: js
+categories: js
+---
+
+`element-ui`虽然有[`el-form`组件](https://element.eleme.cn/#/zh-CN/component/form)，但是仍然需要手动写`el-form-item`。
+
+这里希望进一步抽离配置，在`el-form`的基础上封装个`enhanced-el-form`组件。
+
+这边借鉴[cube-ui的form属性](https://didi.github.io/cube-ui/#/en-US/docs/form)
+
+- options属性，整个表单的配置
+- model属性，是每个表单项的值，`{name:'颜酱',age:18}`
+- schema属性，是每个表单项的配置
+
+```js
+[
+  {
+    type: 'input',
+    modelKey: 'name',
+    label: '姓名',
+    props: {
+      maxlength: 20
+    },
+    rules: [
+      { required: true, message: '请输入姓名', trigger: 'blur' }
+    ]
+  }
+]
+```
+
+
+
