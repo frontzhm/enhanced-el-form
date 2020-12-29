@@ -1,7 +1,7 @@
 <template lang="pug">
 el-form(:model="model" :rules="rules" v-bind="options")
   el-form-item(v-for="config in schema" :label="config.label" :prop="config.modelKey" :key="config.modelKey")
-    el-input(v-model="model[config.modelKey]")
+    el-input(v-model="model[config.modelKey]" v-bind="config.props")
 
 </template>
 <script>

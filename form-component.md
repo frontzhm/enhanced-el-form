@@ -50,22 +50,22 @@ categories: js
 
 ![e-el-form2](https://blog-huahua.oss-cn-beijing.aliyuncs.com/blog/code/e-el-form2.png)
 
-里面的`el-form-item`，如果不加循环的情况下，长这样
+里面的`el-form-item`，如果没有schema的情况下，长这样
 
 ```pug
 el-form(:model="model" :rules="rules" v-bind="options")
   el-form-item(label="活动名称" prop="name")
-    el-input(v-model="model.name")
+    el-input(v-model="model.name" maxlength="20")
   el-form-item(label="年龄" prop="age")
-    el-input(v-model="model.age")
+    el-input(v-model="model.age" maxlength="20")
 ```
 
-当然，最终的目的是，可以直接循环`schema`
+当然，有了`schema`，循环就可以用了
 
 ```pug
 el-form(:model="model" :rules="rules" v-bind="options")
   el-form-item(v-for="config in schema" :label="config.label" :prop="config.modelKey" :key="config.modelKey")
-    el-input(v-model="model[config.modelKey]")
+    el-input(v-model="model[config.modelKey]" v-bind="config.props")
 ```
 
 ## 代码
