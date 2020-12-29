@@ -30,7 +30,7 @@ export default {
         },
         {
           type: "input",
-          modelKey: "name",
+          modelKey: "age",
           label: "年龄",
           props: {
             maxlength: 5

@@ -1,9 +1,7 @@
 <template lang="pug">
 el-form(:model="model" :rules="rules" v-bind="options")
-  el-form-item(label="活动名称" prop="name")
-    el-input(v-model="model.name")
-  el-form-item(label="年龄" prop="age")
-    el-input(v-model="model.age")
+  el-form-item(v-for="config in schema" :label="config.label" :prop="config.modelKey" :key="config.modelKey")
+    el-input(v-model="model[config.modelKey]")
 
 </template>
 <script>
