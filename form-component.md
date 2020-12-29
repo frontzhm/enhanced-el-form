@@ -6,7 +6,15 @@ categories: js
 
 `element-ui`虽然有[`el-form`组件](https://element.eleme.cn/#/zh-CN/component/form)，但是仍然需要手动写`el-form-item`。
 
+![e-el-form1](https://blog-huahua.oss-cn-beijing.aliyuncs.com/blog/code/e-el-form1.png)
+
 这里希望进一步抽离配置，在`el-form`的基础上封装个`enhanced-el-form`组件。
+
+使用的时候希望这样，不再需要手动写里面的`el-form-item`：
+
+```html
+<enhanced-el-form :model="model" :options="options" :schema="schema" ></enhanced-el-form>
+```
 
 这边借鉴[cube-ui的form属性](https://didi.github.io/cube-ui/#/en-US/docs/form)
 
@@ -29,6 +37,7 @@ categories: js
   }
 ]
 ```
+
 
 
 

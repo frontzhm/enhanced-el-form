@@ -1,17 +1,47 @@
-<template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
-  </div>
+<template lang="pug">
+div#app
+  enhanced-el-form(:model="model" :options="options" :schema="schema")
+
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
+import EnhancedElForm from "./components/EnhancedElForm.vue";
 
 export default {
   name: "App",
   components: {
-    HelloWorld
+    EnhancedElForm
+  },
+  data() {
+    return {
+      model: {
+        name: "",
+        age: ""
+      },
+      schema: [
+        {
+          type: "input",
+          modelKey: "name",
+          label: "姓名",
+          props: {
+            maxlength: 20
+          },
+          rules: [{ required: true, message: "请输入姓名", trigger: "blur" }]
+        },
+        {
+          type: "input",
+          modelKey: "name",
+          label: "年龄",
+          props: {
+            maxlength: 5
+          },
+          rules: [{ required: true, message: "请输入年龄", trigger: "blur" }]
+        }
+      ],
+      options: {
+        inline: false
+      }
+    };
   }
 };
 </script>
@@ -21,8 +51,6 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
