@@ -18,9 +18,9 @@ categories: js
 
 这边借鉴[cube-ui的form属性](https://didi.github.io/cube-ui/#/en-US/docs/form)
 
-- options属性，整个表单的配置
-- model属性，是每个表单项的值，`{name:'颜酱',age:18}`
-- schema属性，是每个表单项的配置
+- model属性，表单数据对象，`{name:'颜酱',age:18}`
+- options属性，表单属性配置，`{inline:false}`
+- schema属性，每个表单项的配置数组，如下
 
 ```js
 [

@@ -1,5 +1,8 @@
 <template lang="pug">
-div 1
+div
+  //- el-form(:model="model")
+  div {{rules}}
+
 </template>
 <script>
 export default {
@@ -18,10 +21,18 @@ export default {
       }
     },
     schema: {
-      type: Object,
+      type: Array,
       default() {
         return {};
       }
+    }
+  },
+  computed: {
+    rules() {
+      return this.schema.reduce((acc, cur) => {
+        acc[cur.modelKey] = cur.rules;
+        return acc;
+      }, {});
     }
   }
 };
