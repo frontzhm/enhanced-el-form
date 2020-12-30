@@ -1,8 +1,10 @@
 <template lang="pug">
 el-form(ref="elForm" :model="model" :rules="rules" v-bind="$attrs" v-on="$listeners")
+  slot(name="header")
+  
   template(v-for="config in schema" )
     slot(v-if="config.slotName" :name="config.slotName" v-bind="config")
-
+ 
     el-form-item(v-else :label="config.label" :prop="config.modelKey" :key="config.modelKey")
       el-radio-group(v-if="config.type==='radio-group'"   v-model="model[config.modelKey]" v-bind="config.props")
         el-radio(v-for="(item,index) in config.props.options" :key="index" :label="typeof item==='object'?item.value:item") {{ typeof item==='object'?item.label:item }}
@@ -12,7 +14,8 @@ el-form(ref="elForm" :model="model" :rules="rules" v-bind="$attrs" v-on="$listen
         el-option(v-for="(item,index) in config.props.options" :key="index" :value="typeof item==='object'?item.value:item" :label="typeof item==='object'?item.label:item")
 
       component(v-else :is="'el-'+config.type" v-model="model[config.modelKey]" v-bind="config.props") {{config.text}}
-  slot
+
+  slot(name="footer")
 </template>
 <script>
 export default {

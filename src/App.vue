@@ -10,9 +10,10 @@ div#app
         el-col(:span="11")
           el-form-item(:prop="config.children[1].modelKey")
             el-time-picker(v-model="model[config.children[1].modelKey]" v-bind="config.children[1].props")
-    el-form-item
-      el-button(type="primary" @click="submitForm('ruleForm')") 立即创建
-      el-button(@click="resetForm('ruleForm')") 重置
+    template(#footer)
+      el-form-item
+        el-button(type="primary" @click="submitForm('ruleForm')") 立即创建
+        el-button(@click="resetForm('ruleForm')") 重置
   div {{model}}
 </template>
 

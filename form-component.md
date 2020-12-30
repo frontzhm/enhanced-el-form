@@ -114,8 +114,10 @@ el-form(:model="model" :rules="rules")
 - `el-form`自身也有很多属性，这里通过简单的`v-bind="$attrs"`，将`enhanced-el-from`上面的属性自动到`el-form`。  
 - 同理，`v-on="$listeners"`
 - `el-form`上面的方法，稍微麻烦点，通过手动赋值
-- 一般提交按钮不需要配置项，直接插入即可，这里增加`slot`
-- 部分表单项，需要定制，通过`slotName`属性，表示不参与内部循环
+- 一般提交按钮不需要配置项，直接插入即可，这里增加`slot#footer`
+- 同理，表单的开始有可能有别的描述，这里增加`slot#header`
+- 部分表单项，需要定制，通过`slotName`属性，表示不参与内部循环，需要自己写逻辑
+- `date`系列的表单，可能需要多个组件拼接，一般有`children`，这种时候再需要自己定制的基础上，还需要处理`children`的rules
 
 ```js
 // el-form(ref="elForm" :model="model" :rules="rules" v-bind="$attrs" v-on="$listeners")
@@ -124,6 +126,266 @@ el-form(:model="model" :rules="rules")
     methods.forEach(method => (this[method] = this.$refs.elForm[method]));
   }
 ```
+
+以上逻辑将在下面的部分展示全部代码。
+
+## 演示实例的优化
+
+实例的效果：
+
+![e-el-form8](https://blog-huahua.oss-cn-beijing.aliyuncs.com/blog/code/e-el-form8.gif)
+
+EnhancedElForm的代码如下
+
+```vue
+<template lang="pug">
+el-form(ref="elForm" :model="model" :rules="rules" v-bind="$attrs" v-on="$listeners")
+  slot(name="header")
+  
+  template(v-for="config in schema" )
+    slot(v-if="config.slotName" :name="config.slotName" v-bind="config")
+ 
+    el-form-item(v-else :label="config.label" :prop="config.modelKey" :key="config.modelKey")
+      el-radio-group(v-if="config.type==='radio-group'"   v-model="model[config.modelKey]" v-bind="config.props")
+        el-radio(v-for="(item,index) in config.props.options" :key="index" :label="typeof item==='object'?item.value:item") {{ typeof item==='object'?item.label:item }}
+      el-checkbox-group(v-else-if="config.type==='checkbox-group'"   v-model="model[config.modelKey]" v-bind="config.props")
+        el-checkbox(v-for="(item,index) in config.props.options" :key="index" :label="typeof item==='object'?item.value:item") {{ typeof item==='object'?item.label:item }}
+      el-select(v-else-if="config.type==='select'"   v-model="model[config.modelKey]" v-bind="config.props")
+        el-option(v-for="(item,index) in config.props.options" :key="index" :value="typeof item==='object'?item.value:item" :label="typeof item==='object'?item.label:item")
+
+      component(v-else :is="'el-'+config.type" v-model="model[config.modelKey]" v-bind="config.props") {{config.text}}
+
+  slot(name="footer")
+</template>
+<script>
+export default {
+  name: "enhanced-el-form",
+  props: {
+    model: {
+      type: Object,
+      default() {
+        return {};
+      }
+    },
+    schema: {
+      type: Array,
+      default() {
+        return {};
+      }
+    }
+  },
+  computed: {
+    rules() {
+      return this.schema.reduce((acc, cur) => {
+        acc[cur.modelKey] = cur.rules;
+        // 日期组件可能有children
+        const hasChildren = cur.children && cur.children.length;
+        hasChildren &&
+          cur.children.forEach(child => (acc[child.modelKey] = child.rules));
+        return acc;
+      }, {});
+    }
+  },
+  mounted() {
+    // el-form上面的方法继承过来
+    const methods = [
+      "validate",
+      "validateField",
+      "resetFields",
+      "clearValidate"
+    ];
+    methods.forEach(method => (this[method] = this.$refs.elForm[method]));
+  }
+};
+</script>
+
+```
+
+App.vue的代码如下
+
+```vue
+<template lang="pug">
+div#app
+  enhanced-el-form(ref='ruleForm' :model="model" :schema="schema"  label-width="100px" @validate="validate")
+    template(#date="config")
+      el-form-item(:label="config.label")
+        el-col(:span="11")
+          el-form-item(:prop="config.children[0].modelKey")
+            el-date-picker(v-model="model[config.children[0].modelKey]" v-bind="config.children[0].props")
+        el-col(:span="2") --
+        el-col(:span="11")
+          el-form-item(:prop="config.children[1].modelKey")
+            el-time-picker(v-model="model[config.children[1].modelKey]" v-bind="config.children[1].props")
+    template(#footer)
+      el-form-item
+        el-button(type="primary" @click="submitForm('ruleForm')") 立即创建
+        el-button(@click="resetForm('ruleForm')") 重置
+  div {{model}}
+</template>
+
+<script>
+import EnhancedElForm from "./components/EnhancedElForm.vue";
+export default {
+  name: "App",
+  components: { EnhancedElForm },
+  data() {
+    return {
+      model: { type: [] },
+      schema: [
+        {
+          type: "input",
+          modelKey: "name",
+          label: "活动名称",
+          rules: [
+            { required: true, message: "请输入活动名称", trigger: "blur" },
+            { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" }
+          ]
+        },
+        {
+          type: "select",
+          modelKey: "region",
+          label: "活动区域",
+          props: {
+            placeholder: "请选择活动区域",
+            options: [
+              { label: "区域一", value: "shanghai" },
+              { label: "区域二", value: "beijing" }
+            ]
+          },
+          rules: [
+            { required: true, message: "请选择活动区域", trigger: "change" }
+          ]
+        },
+        {
+          slotName: "date",
+          label: "活动时间",
+          children: [
+            {
+              modelKey: "date1",
+              props: {
+                type: "date",
+                placeholder: "选择日期",
+                style: "width:100%"
+              },
+              rules: [
+                {
+                  type: "date",
+                  required: true,
+                  message: "请选择日期",
+                  trigger: "change"
+                }
+              ]
+            },
+            {
+              modelKey: "date2",
+              props: {
+                placeholder: "选择时间",
+                style: "width:100%"
+              },
+              rules: [
+                {
+                  type: "date",
+                  required: true,
+                  message: "请选择时间",
+                  trigger: "change"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          type: "switch",
+          modelKey: "delivery",
+          label: "即时配送",
+          props: {}
+        },
+
+        {
+          type: "checkbox-group",
+          modelKey: "type",
+          label: "活动性质",
+          props: {
+            options: [
+              "美食/餐厅线上活动",
+              "地推活动",
+              "线下主题活动",
+              "单纯品牌曝光"
+            ]
+          },
+          rules: [
+            {
+              type: "array",
+              required: true,
+              message: "请至少选择一个活动性质",
+              trigger: "change"
+            }
+          ]
+        },
+
+        {
+          type: "radio-group",
+          modelKey: "resource",
+          label: "特殊资源",
+          props: {
+            options: [
+              { label: "线上品牌商赞助", value: "xianshang" },
+              { label: "线下场地免费", value: "xianxia" }
+            ]
+          },
+          rules: [
+            { required: true, message: "请选择活动资源", trigger: "change" }
+          ]
+        },
+        {
+          type: "input",
+          modelKey: "desc",
+          label: "活动形式",
+          props: {
+            type: "textarea"
+          },
+          rules: [
+            { required: true, message: "请填写活动形式", trigger: "blur" }
+          ]
+        }
+      ]
+    };
+  },
+  methods: {
+    validate(...args) {
+      console.log(...args);
+    },
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          alert("submit!");
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+    }
+  }
+};
+</script>
+
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #2c3e50;
+}
+</style>
+
+```
+
+## 不足
+
+为了方便，这里的组件`EnhancedElForm`，直接修改了父组件的`model`。
+但这是违反规范的，回头有空再研究下，读者有思路也可以指导下~
 
 ## 代码
 
