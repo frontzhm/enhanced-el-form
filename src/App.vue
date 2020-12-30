@@ -1,6 +1,6 @@
 <template lang="pug">
 div#app
-  enhanced-el-form(:model="model" :options="options" :schema="schema")
+  enhanced-el-form(:model="model" :schema="schema" :inline="true")
   div {{model}}
 
 </template>

@@ -1,5 +1,5 @@
 <template lang="pug">
-el-form(:model="model" :rules="rules" v-bind="options")
+el-form(:model="model" :rules="rules" v-bind="$attrs")
   el-form-item(v-for="config in schemaHandled" :label="config.label" :prop="config.modelKey" :key="config.modelKey")
     component(:is="'el-'+config.type" v-model="model[config.modelKey]" v-bind="config.props") {{config.text}}
       template(v-if="config.type==='radio-group'" )
@@ -13,12 +13,6 @@ el-form(:model="model" :rules="rules" v-bind="options")
 export default {
   name: "enhanced-el-form",
   props: {
-    options: {
-      type: Object,
-      default() {
-        return {};
-      }
-    },
     model: {
       type: Object,
       default() {
