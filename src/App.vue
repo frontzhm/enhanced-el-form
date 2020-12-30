@@ -10,16 +10,10 @@ import EnhancedElForm from "./components/EnhancedElForm.vue";
 
 export default {
   name: "App",
-  components: {
-    EnhancedElForm
-  },
+  components: { EnhancedElForm },
   data() {
     return {
-      model: {
-        name: "",
-        age: "",
-        likes: ""
-      },
+      model: { name: "", age: "", likes: "" },
       schema: [
         {
           type: "input",

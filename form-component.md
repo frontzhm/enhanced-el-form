@@ -13,13 +13,12 @@ categories: js
 使用的时候希望这样，不再需要手动写里面的`el-form-item`：
 
 ```html
-<enhanced-el-form :model="model" :options="options" :schema="schema" ></enhanced-el-form>
+<enhanced-el-form :model="model" :schema="schema" ></enhanced-el-form>
 ```
 
 这边借鉴[cube-ui的form属性](https://didi.github.io/cube-ui/#/en-US/docs/form)
 
 - model属性，表单数据对象，`{name:'颜酱',age:18}`
-- options属性，表单属性配置，`{inline:true}`
 - schema属性，每个表单项的配置数组，如下
 
 ```js
@@ -40,20 +39,20 @@ categories: js
 
 ## 组件的概况
 
-综上，`enhanced-el-form`组件的大概组成就出来了。
+综上，`enhanced-el-form`组件的大概就出来了。
 
-需要注意三点：
-
-<!-- - `model`属性需要更改父组件的数据，为方便，配合`sync`修饰符 -->
-- `rules`属性是`el-form`有的，这里通过`schema`得到
-- `el-form`本身的其他属性，直接遍历`options`即可
+注意，`rules`属性是`el-form`有的，这里通过`schema`得到
 
 ![e-el-form2](https://blog-huahua.oss-cn-beijing.aliyuncs.com/blog/code/e-el-form2.png)
+
+## el-form-item的处理
+
+现在有一个很简单的表单，需要填写`姓名`和`年龄`。
 
 里面的`el-form-item`，如果没有schema的情况下，长这样
 
 ```pug
-el-form(:model="model" :rules="rules" v-bind="options")
+el-form(:model="model" :rules="rules")
   el-form-item(label="活动名称" prop="name")
     el-input(v-model="model.name" maxlength="20")
   el-form-item(label="年龄" prop="age")
@@ -63,7 +62,7 @@ el-form(:model="model" :rules="rules" v-bind="options")
 当然，有了`schema`，循环就可以用了
 
 ```pug
-el-form(:model="model" :rules="rules" v-bind="options")
+el-form(:model="model" :rules="rules")
   el-form-item(v-for="config in schema" :label="config.label" :prop="config.modelKey" :key="config.modelKey")
     el-input(v-model="model[config.modelKey]" v-bind="config.props")
 ```
@@ -91,43 +90,18 @@ el-form(:model="model" :rules="rules" v-bind="options")
 - select，需要子组件
 - upload，需要子组件
 
-
-
-
-### 可输入的
-
-- input
-- input-number
-- 
-
-### 可选择的
-
-- select
-- cascader
-- switch
-
-
-
-
-radio checkbox 
-input 
-
-
 ## 代码
 
 ### 组件概况代码
 
 ```vue
 <template lang="pug">
-el-form(:model="model" :rules="rules" v-bind="options")
+  el-form(:model="model" :rules="rules")
 </template>
 <script>
 export default {
   name: "enhanced-el-form",
   props: {
-    options: {
-      type: Object, default() { return {}; } 
-    },
     model: {
       type: Object, default() { return {}; }
     },
