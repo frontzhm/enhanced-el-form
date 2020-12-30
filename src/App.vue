@@ -1,6 +1,18 @@
 <template lang="pug">
 div#app
-  enhanced-el-form(:model="model" :schema="schema"  label-width="100px" class="demo-ruleForm")
+  enhanced-el-form(ref='ruleForm' :model="model" :schema="schema"  label-width="100px" @validate="validate")
+    template(#date="config")
+      el-form-item(:label="config.label")
+        el-col(:span="11")
+          el-form-item(:prop="config.children[0].modelKey")
+            el-date-picker(v-model="model[config.children[0].modelKey]" v-bind="config.children[0].props")
+        el-col(:span="2") --
+        el-col(:span="11")
+          el-form-item(:prop="config.children[1].modelKey")
+            el-time-picker(v-model="model[config.children[1].modelKey]" v-bind="config.children[1].props")
+    el-form-item
+      el-button(type="primary" @click="submitForm('ruleForm')") 立即创建
+      el-button(@click="resetForm('ruleForm')") 重置
   div {{model}}
 </template>
 
@@ -38,20 +50,39 @@ export default {
           ]
         },
         {
-          type: "date-picker",
-          modelKey: "date1",
+          slotName: "date",
           label: "活动时间",
-          props: {
-            type: "date",
-            placeholder: "选择日期",
-            style: "width:100%"
-          },
-          rules: [
+          children: [
             {
-              type: "date",
-              required: true,
-              message: "请选择日期",
-              trigger: "change"
+              modelKey: "date1",
+              props: {
+                type: "date",
+                placeholder: "选择日期",
+                style: "width:100%"
+              },
+              rules: [
+                {
+                  type: "date",
+                  required: true,
+                  message: "请选择日期",
+                  trigger: "change"
+                }
+              ]
+            },
+            {
+              modelKey: "date2",
+              props: {
+                placeholder: "选择时间",
+                style: "width:100%"
+              },
+              rules: [
+                {
+                  type: "date",
+                  required: true,
+                  message: "请选择时间",
+                  trigger: "change"
+                }
+              ]
             }
           ]
         },
@@ -111,6 +142,24 @@ export default {
         }
       ]
     };
+  },
+  methods: {
+    validate(...args) {
+      console.log(...args);
+    },
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          alert("submit!");
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+    }
   }
 };
 </script>

@@ -108,6 +108,23 @@ el-form(:model="model" :rules="rules")
 > 注意：多选的时候，`model`里面的相应项的默认值必须是`数组`
 
 ![e-el-form7](https://blog-huahua.oss-cn-beijing.aliyuncs.com/blog/code/e-el-form7.png)
+
+## 优化
+
+- `el-form`自身也有很多属性，这里通过简单的`v-bind="$attrs"`，将`enhanced-el-from`上面的属性自动到`el-form`。  
+- 同理，`v-on="$listeners"`
+- `el-form`上面的方法，稍微麻烦点，通过手动赋值
+- 一般提交按钮不需要配置项，直接插入即可，这里增加`slot`
+- 部分表单项，需要定制，通过`slotName`属性，表示不参与内部循环
+
+```js
+// el-form(ref="elForm" :model="model" :rules="rules" v-bind="$attrs" v-on="$listeners")
+  mounted() {
+    const methods = [ "validate", "validateField", "resetFields", "clearValidate" ];
+    methods.forEach(method => (this[method] = this.$refs.elForm[method]));
+  }
+```
+
 ## 代码
 
 ### 代码：组件概况
